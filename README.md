@@ -16,6 +16,14 @@ This video (not mine) has a nice overview of teslausb and how to install it:
 
 If you are interested in having more detailed information about how TeslaUsb works, have a look into the [wiki](https://github.com/marcone/teslausb/wiki).
 
+## What's New & Easier to Set Up
+
+- **[TeslaUSB Setup Studio](setup-studio/index.html)**: Interactive, web-based visual configurator that calculates storage partitions, safely escapes bash syntax for passwords and SSIDs, and writes `teslausb_setup_variables.conf` **directly to your SD card** using the Web File System Access API — zero risk of `.txt` naming errors on Windows!
+- **First-Boot Smart AP Onboarding**: If WiFi cannot be reached or configuration is missing, the Pi launches a setup hotspot (`TeslaUSB-Setup` at `192.168.4.1`) with a captive portal. You can scan networks and finish setup straight from your phone.
+- **[🎬 Synchronized 4-Camera Video Player](teslausb-www/html/player/player.html)**: Integrated HTML5 player that synchronizes Front, Back, Left, and Right camera streams with 2x2 grid view, single-camera zoom, synchronized scrubbing, and variable playback speed.
+- **Interactive CLI Configurator & Linter**: Run `python tools/teslausb-wizard.py` to configure from any terminal, or test an existing file with `--validate`.
+- **[⚡ Quickstart Guide](QUICKSTART.md)**: A streamlined guide with hardware, cabling, and troubleshooting tables.
+
 ## Prerequisites
 
 ### Assumptions

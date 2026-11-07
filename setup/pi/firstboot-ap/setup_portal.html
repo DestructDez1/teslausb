@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TeslaUSB First-Boot Setup</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --tesla-red: #e82127;
+      --text: #f0f6fc;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --success: #238636;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 480px;
+      width: 100%;
+    }
+    header {
+      text-align: center;
+      margin: 1.5rem 0 1rem 0;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--tesla-red);
+      color: white;
+      font-weight: 800;
+      font-size: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 0 20px rgba(232, 33, 39, 0.4);
+    }
+    h1 { font-size: 1.3rem; font-weight: 700; }
+    p.subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    h2 { font-size: 1rem; margin-bottom: 0.75rem; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem; }
+    input, select {
+      width: 100%;
+      background: #090d13;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.65rem 0.75rem;
+      color: var(--text);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .wifi-list {
+      max-height: 160px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+    .wifi-item {
+      padding: 0.6rem 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .wifi-item:hover, .wifi-item.selected {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--accent);
+    }
+    .btn {
+      width: 100%;
+      background: var(--tesla-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #c4181d; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    .btn-secondary:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    #logOutput {
+      background: #05070a;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #38bdf8;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      margin-bottom: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">T</div>
+      <h1>TeslaUSB Onboarding</h1>
+      <p class="subtitle">First-Boot Smart Hotspot Setup</p>
+    </header>
+
+    <div class="card" id="setupFormCard">
+      <div class="status-badge" id="setupStatusBadge">⚠️ Initial Setup Needed</div>
+
+      <h2>📶 Connect Home WiFi</h2>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.35rem;">
+        <label style="margin:0;">Available Networks</label>
+        <button type="button" id="scanWifiBtn" style="background:none; border:none; color:var(--accent); font-size:0.75rem; cursor:pointer;">🔄 Rescan</button>
+      </div>
+      <div class="wifi-list" id="wifiList">
+        <div style="padding:0.75rem; text-align:center; color:var(--text-muted); font-size:0.8rem;">Scanning for networks...</div>
+      </div>
+
+      <label for="ssid">WiFi Network Name (SSID)</label>
+      <input type="text" id="ssid" placeholder="Network SSID">
+
+      <label for="wifiPass">WiFi Password</label>
+      <input type="password" id="wifiPass" placeholder="WiFi security key">
+
+      <h2>📁 Archiving Destination</h2>
+      <label for="archiveSystem">Storage Target</label>
+      <select id="archiveSystem" onchange="toggleArchiveFields()">
+        <option value="none">Standalone / Web UI Only (No Server)</option>
+        <option value="cifs" selected>Windows Share / NAS / SMB (CIFS)</option>
+        <option value="rclone">Cloud Storage (Rclone / Google Drive)</option>
+        <option value="rsync">Linux SSH Server (RSync)</option>
+      </select>
+
+      <div id="cifsBox">
+        <label for="cifsServer">Archive Server IP or Hostname</label>
+        <input type="text" id="cifsServer" placeholder="192.168.1.50">
+
+        <label for="cifsShare">Share Name / Folder</label>
+        <input type="text" id="cifsShare" placeholder="TeslaCam">
+
+        <label for="cifsUser">Share Username</label>
+        <input type="text" id="cifsUser" placeholder="username">
+
+        <label for="cifsPass">Share Password</label>
+        <input type="password" id="cifsPass" placeholder="password">
+      </div>
+
+      <button class="btn" id="startSetupBtn" onclick="submitSetup()">⚡ Save & Start Setup</button>
+      <div id="logOutput"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      scanWifi();
+      document.getElementById("scanWifiBtn").addEventListener("click", scanWifi);
+    });
+
+    function toggleArchiveFields() {
+      const sys = document.getElementById("archiveSystem").value;
+      document.getElementById("cifsBox").style.display = sys === "cifs" ? "block" : "none";
+    }
+
+    async function scanWifi() {
+      const listEl = document.getElementById("wifiList");
+      listEl.innerHTML = '<div style="padding:0.75rem; text-align:center; color:var(--text-muted); font-size:0.8rem;">Scanning...</div>';
+      try {
+        const res = await fetch("/api/scan_wifi");
+        const data = await res.json();
+        listEl.innerHTML = "";
+        if (!data.networks || data.networks.length === 0) {
+          listEl.innerHTML = '<div style="padding:0.75rem; text-align:center; color:var(--text-muted); font-size:0.8rem;">No networks found</div>';
+          return;
+        }
+        data.networks.forEach(net => {
+          const div = document.createElement("div");
+          div.className = "wifi-item";
+          div.innerHTML = `<span><strong>${net.ssid}</strong></span><span style="color:var(--text-muted)">${net.signal || ""}</span>`;
+          div.onclick = () => {
+            document.querySelectorAll(".wifi-item").forEach(i => i.classList.remove("selected"));
+            div.classList.add("selected");
+            document.getElementById("ssid").value = net.ssid;
+          };
+          listEl.appendChild(div);
+        });
+      } catch (e) {
+        listEl.innerHTML = '<div style="padding:0.75rem; text-align:center; color:var(--text-muted); font-size:0.8rem;">Manual SSID entry required</div>';
+      }
+    }
+
+    async function submitSetup() {
+      const ssid = document.getElementById("ssid").value.trim();
+      const pass = document.getElementById("wifiPass").value;
+      const archiveSystem = document.getElementById("archiveSystem").value;
+      const cifsServer = document.getElementById("cifsServer")?.value.trim() || "";
+      const cifsShare = document.getElementById("cifsShare")?.value.trim() || "";
+      const cifsUser = document.getElementById("cifsUser")?.value.trim() || "";
+      const cifsPass = document.getElementById("cifsPass")?.value || "";
+
+      if (!ssid) {
+        alert("Please enter or select a WiFi SSID.");
+        return;
+      }
+
+      const btn = document.getElementById("startSetupBtn");
+      btn.disabled = true;
+      btn.textContent = "Applying & Connecting...";
+      
+      const logEl = document.getElementById("logOutput");
+      logEl.style.display = "block";
+      logEl.textContent = "Configuring WiFi and starting setup loop...\n";
+
+      try {
+        const res = await fetch("/api/apply_and_start", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ssid,
+            wifiPass: pass,
+            archiveSystem,
+            cifsServer,
+            cifsShare,
+            cifsUser,
+            cifsPass
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          logEl.textContent += "Configuration written successfully! Initiating WiFi connection...\n";
+          pollLog();
+        } else {
+          logEl.textContent += `Error: ${data.error || "Setup failed"}\n`;
+          btn.disabled = false;
+          btn.textContent = "Retry Setup";
+        }
+      } catch (e) {
+        logEl.textContent += "Connection initiated! The Pi is now connecting to your home WiFi.\nCheck http://teslausb.local on your home network in 2-3 minutes.\n";
+      }
+    }
+
+    function pollLog() {
+      const logEl = document.getElementById("logOutput");
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch("/api/setup_log");
+          const text = await res.text();
+          if (text) {
+            logEl.textContent = text;
+            logEl.scrollTop = logEl.scrollHeight;
+          }
+        } catch (e) {
+          // May lose connection when Pi switches from AP to WiFi client
+        }
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
+

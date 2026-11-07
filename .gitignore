@@ -4,3 +4,9 @@
 *.ipr
 *.iws
 .idea/
+cache/
+*.zip
+*.img
+*.pyc
+__pycache__/
+*.code-workspace

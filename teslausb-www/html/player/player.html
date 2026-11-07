@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeslaUSB Multi-Cam Player</title>
+  <link rel="stylesheet" href="player.css">
+  <link rel="icon" type="image/png" href="../icons/favicon-32x32.png">
+</head>
+<body>
+
+  <!-- Top App Bar -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">
+        TeslaUSB <span class="tag">Multi-Cam Sync</span>
+      </div>
+    </div>
+    <div class="header-links">
+      <a href="../index.html">← Classic Dashboard</a>
+      <a href="/setup-studio/index.html" target="_blank">⚙️ Setup Studio</a>
+    </div>
+  </header>
+
+  <!-- App Body Layout -->
+  <div class="app-container">
+    
+    <!-- Left Clips List -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-tabs">
+          <button class="tab-btn active" data-folder="SentryClips">Sentry</button>
+          <button class="tab-btn" data-folder="SavedClips">Saved</button>
+          <button class="tab-btn" data-folder="RecentClips">Recent</button>
+        </div>
+      </div>
+      <ul class="clip-list" id="clipList"></ul>
+    </aside>
+
+    <!-- Center Stage -->
+    <main class="stage">
+      
+      <!-- Synchronized 2x2 Video Grid -->
+      <div class="video-grid" id="videoGrid">
+        <div class="video-slot" id="slotFront" data-cam="front">
+          <div class="slot-label">Front</div>
+          <video id="videoFront" playsinline muted disableRemotePlayback></video>
+        </div>
+        <div class="video-slot" id="slotBack" data-cam="back">
+          <div class="slot-label">Back</div>
+          <video id="videoBack" playsinline muted disableRemotePlayback></video>
+        </div>
+        <div class="video-slot" id="slotLeft" data-cam="left">
+          <div class="slot-label">Left Repeater</div>
+          <video id="videoLeft" playsinline muted disableRemotePlayback></video>
+        </div>
+        <div class="video-slot" id="slotRight" data-cam="right">
+          <div class="slot-label">Right Repeater</div>
+          <video id="videoRight" playsinline muted disableRemotePlayback></video>
+        </div>
+      </div>
+
+      <!-- Synchronized Controls -->
+      <div class="controls-bar">
+        <div class="timeline-row">
+          <span class="time-display" id="currentTime">00:00</span>
+          <input type="range" class="scrubber" id="scrubber" min="0" max="60" step="0.1" value="0">
+          <span class="time-display" id="totalTime" style="text-align:right;">01:00</span>
+        </div>
+
+        <div class="buttons-row">
+          <div class="btn-group">
+            <button class="ctrl-btn play-btn" id="playBtn">▶ Play</button>
+            <button class="ctrl-btn" onclick="teslaPlayer.seekRelative(-5)">⏪ -5s</button>
+            <button class="ctrl-btn" onclick="teslaPlayer.seekRelative(5)">+5s ⏩</button>
+            <select class="speed-select" id="speedSelect">
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1.0x</option>
+              <option value="2">2.0x</option>
+              <option value="4">4.0x</option>
+            </select>
+          </div>
+
+          <div class="btn-group">
+            <button class="ctrl-btn" onclick="teslaPlayer.toggleGridMode()">🔲 Grid View</button>
+            <button class="ctrl-btn" onclick="document.querySelector('.stage').requestFullscreen()">⛶ Fullscreen</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="player.js"></script>
+</body>
+</html>
+

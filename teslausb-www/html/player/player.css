@@ -1,0 +1,346 @@
+:root {
+  --bg-dark: #0a0c10;
+  --bg-panel: #131720;
+  --bg-control: rgba(20, 24, 33, 0.9);
+  --border: #232a38;
+  --tesla-red: #e82127;
+  --text-primary: #f0f3f6;
+  --text-secondary: #8b949e;
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+header {
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--tesla-red);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.brand-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tag {
+  font-size: 0.7rem;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  padding: 0.1rem 0.4rem;
+  border-radius: 12px;
+}
+
+.header-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-left: 1rem;
+  transition: color 0.2s;
+}
+
+.header-links a:hover {
+  color: var(--text-primary);
+}
+
+/* Main Layout */
+.app-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left Sidebar - Event Clips Browser */
+.sidebar {
+  width: 320px;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.sidebar-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+}
+
+.tab-btn.active {
+  background: #1f2533;
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.clip-list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.clip-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.clip-item:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.clip-item.active {
+  background: rgba(232, 33, 39, 0.12);
+  border-left: 3px solid var(--tesla-red);
+}
+
+.clip-date {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.clip-meta {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Main Video Stage */
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+.video-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 3px;
+  background: #07090d;
+  padding: 3px;
+  position: relative;
+}
+
+.video-slot {
+  position: relative;
+  background: #111;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.video-slot video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.slot-label {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  z-index: 2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
+/* Single View Expanded Mode */
+.video-grid.single-mode .video-slot {
+  display: none;
+}
+
+.video-grid.single-mode .video-slot.expanded {
+  display: flex;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+}
+
+/* Bottom Controls */
+.controls-bar {
+  background: var(--bg-control);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.time-display {
+  font-size: 0.8rem;
+  font-family: ui-monospace, monospace;
+  color: var(--text-secondary);
+  min-width: 90px;
+}
+
+.scrubber {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  background: #2a3140;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--tesla-red);
+  cursor: pointer;
+}
+
+.buttons-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ctrl-btn {
+  background: #202633;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.15s;
+}
+
+.ctrl-btn:hover {
+  background: #2b3345;
+  border-color: #3f4a61;
+}
+
+.ctrl-btn.play-btn {
+  background: var(--tesla-red);
+  border-color: var(--tesla-red);
+  color: white;
+  padding: 0.45rem 1.1rem;
+}
+
+.ctrl-btn.play-btn:hover {
+  background: #c4181d;
+}
+
+.speed-select {
+  background: #202633;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 6px;
+  padding: 0.45rem 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .app-container {
+    flex-direction: column-reverse;
+  }
+  .sidebar {
+    width: 100%;
+    height: 180px;
+    border-right: none;
+    border-top: 1px solid var(--border);
+  }
+}
+

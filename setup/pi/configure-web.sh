@@ -24,6 +24,10 @@ umount /var/www/html/fs/LightShow &> /dev/null || true
 umount /var/www/html/fs/Boombox &> /dev/null || true
 find /var/www/html -mount \( -type f -o -type l \) -print0 | xargs -0 rm
 cp -r "$SOURCE_DIR/teslausb-www/html" /var/www/
+if [ -d "$SOURCE_DIR/setup-studio" ]
+then
+  cp -r "$SOURCE_DIR/setup-studio" /var/www/html/
+fi
 ln -sf /teslausb/teslausb-headless-setup.log /var/www/html/
 ln -sf /mutable/archiveloop.log /var/www/html/
 ln -sf /tmp/diagnostics.txt /var/www/html/

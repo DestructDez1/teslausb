@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeslaUSB Setup Studio | Effortless Configurator & Flasher</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="../teslausb-www/html/icons/favicon-32x32.png">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="logo-area">
+      <div class="logo-icon">T</div>
+      <div class="logo-text">
+        <h1>TeslaUSB Studio <span class="badge">v2.5 Setup Wizard</span></h1>
+        <p>Smart Dashcam, Sentry Archiving & Media Drive for Raspberry Pi</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline" id="openLinterBtn">🔍 Config Linter</button>
+      <a href="../doc/OneStepSetup.md" target="_blank" class="btn btn-secondary">📖 Docs</a>
+    </div>
+  </header>
+
+  <!-- Main Wizard Container -->
+  <main>
+
+    <!-- Wizard Step Progress Bar -->
+    <nav class="wizard-nav">
+      <button class="step-indicator active" data-step="1">
+        <div class="step-num">1</div>
+        <div class="step-label">Hardware & Space</div>
+      </button>
+      <button class="step-indicator" data-step="2">
+        <div class="step-num">2</div>
+        <div class="step-label">WiFi & Network</div>
+      </button>
+      <button class="step-indicator" data-step="3">
+        <div class="step-num">3</div>
+        <div class="step-label">Archive Sync</div>
+      </button>
+      <button class="step-indicator" data-step="4">
+        <div class="step-num">4</div>
+        <div class="step-label">Notifications</div>
+      </button>
+      <button class="step-indicator" data-step="5">
+        <div class="step-num">5</div>
+        <div class="step-label">Car & AP</div>
+      </button>
+      <button class="step-indicator" data-step="6">
+        <div class="step-num">6</div>
+        <div class="step-label">Deploy & Write</div>
+      </button>
+    </nav>
+
+    <!-- STEP 1: Hardware & Storage -->
+    <section class="step-content active" id="step1">
+      <div class="card">
+        <h2 class="card-title">Select Your Hardware</h2>
+        <p class="card-subtitle">Choose the Single Board Computer (SBC) you are using in your Tesla.</p>
+        
+        <div class="grid-cards">
+          <div class="choice-card" data-hardware="pizero2">
+            <div class="choice-icon">⚡</div>
+            <h4>Raspberry Pi Zero 2 W</h4>
+            <p>Compact & low power. Uses inner micro-USB data port. 2.4 GHz WiFi only.</p>
+          </div>
+          <div class="choice-card selected" data-hardware="pi4">
+            <div class="choice-icon">🚀</div>
+            <h4>Raspberry Pi 4 Model B</h4>
+            <p>Fast transfers, dual-band 2.4/5 GHz WiFi, USB-C OTG port.</p>
+          </div>
+          <div class="choice-card" data-hardware="pi5">
+            <div class="choice-icon">🏎️</div>
+            <h4>Raspberry Pi 5</h4>
+            <p>Maximum speed & performance. PCIe NVMe SSD support via HAT.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info" id="hardwareNotes">
+          <strong>Raspberry Pi 4:</strong> Connect using a USB-A to USB-C cable to the Pi's USB-C port. Some cars require a USB-A power+data splitter if the port doesn't provide enough current.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Storage Drive & Partition Allocator</h2>
+        <p class="card-subtitle">Calculate and allocate virtual drives for Dashcam, Music, LightShow, and Boombox.</p>
+
+        <div class="form-group">
+          <label for="sdSizeSelect">Total MicroSD Card or SSD Size</label>
+          <select id="sdSizeSelect">
+            <option value="64">64 GB (Minimum supported)</option>
+            <option value="128" selected>128 GB (Recommended)</option>
+            <option value="256">256 GB (Optimal for heavy sentry recording)</option>
+            <option value="512">512 GB (High capacity / large music library)</option>
+            <option value="1024">1 TB (External SSD / NVMe)</option>
+          </select>
+        </div>
+
+        <!-- Visual Partition Bar -->
+        <div class="storage-visualizer">
+          <label>Interactive Storage Allocation</label>
+          <div class="storage-bar-wrapper">
+            <div class="storage-bar-seg seg-os" id="segOs">OS</div>
+            <div class="storage-bar-seg seg-cam" id="segCam">Cam</div>
+            <div class="storage-bar-seg seg-music" id="segMusic">Music</div>
+            <div class="storage-bar-seg seg-lightshow" id="segLightshow">LightShow</div>
+            <div class="storage-bar-seg seg-boombox" id="segBoombox">Boombox</div>
+            <div class="storage-bar-seg seg-free" id="segFree">Free</div>
+          </div>
+          <div class="storage-legend">
+            <div class="legend-item"><div class="legend-dot seg-os"></div> OS Reserved (6 GB)</div>
+            <div class="legend-item"><div class="legend-dot seg-cam"></div> TeslaCam Partition</div>
+            <div class="legend-item"><div class="legend-dot seg-music"></div> Music Partition</div>
+            <div class="legend-item"><div class="legend-dot seg-lightshow"></div> LightShow Partition</div>
+            <div class="legend-item"><div class="legend-dot seg-boombox"></div> Custom Boombox Horns</div>
+          </div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <label for="camSlider">TeslaCam Drive Size (Dashcam & Sentry Clips)</label>
+            <span class="slider-val" id="camSliderVal">40 GB</span>
+          </div>
+          <input type="range" id="camSlider" min="32" max="110" step="4" value="40">
+          <p class="label-desc">Recommended 40–80 GB. Larger sizes allow keeping more historical RecentClips before archiving.</p>
+        </div>
+
+        <div class="toggle-wrapper" style="margin-top: 1.25rem;">
+          <div class="toggle-info">
+            <h5>Include Music USB Drive</h5>
+            <p>Emulate a secondary USB partition for your MP3/FLAC music library</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="musicToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div class="slider-group" id="musicSliderGroup" style="display:none; padding-left: 1rem;">
+          <div class="slider-header">
+            <label for="musicSlider">Music Drive Size</label>
+            <span class="slider-val" id="musicSliderVal">16 GB</span>
+          </div>
+          <input type="range" id="musicSlider" min="2" max="64" step="2" value="16">
+        </div>
+
+        <div class="toggle-wrapper">
+          <div class="toggle-info">
+            <h5>Include Custom LightShow USB Drive</h5>
+            <p>Store custom Tesla light shows for playback on holidays or events</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="lightshowToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div class="slider-group" id="lightshowSliderGroup" style="display:none; padding-left: 1rem;">
+          <div class="slider-header">
+            <label for="lightshowSlider">LightShow Drive Size</label>
+            <span class="slider-val" id="lightshowSliderVal">2 GB</span>
+          </div>
+          <input type="range" id="lightshowSlider" min="1" max="8" step="1" value="2">
+        </div>
+
+        <div class="toggle-wrapper">
+          <div class="toggle-info">
+            <h5>Include Custom Boombox Horns Drive</h5>
+            <p>Add custom lock chimes and driving/horn sounds for newer Tesla models</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="boomboxToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div class="slider-group" id="boomboxSliderGroup" style="display:none; padding-left: 1rem;">
+          <div class="slider-header">
+            <label for="boomboxSlider">Boombox Drive Size</label>
+            <span class="slider-val" id="boomboxSliderVal">1 GB</span>
+          </div>
+          <input type="range" id="boomboxSlider" min="1" max="4" step="1" value="1">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STEP 2: WiFi & Network -->
+    <section class="step-content" id="step2">
+      <div class="card">
+        <h2 class="card-title">Wireless Network Configuration</h2>
+        <p class="card-subtitle">TeslaUSB automatically connects to your home WiFi to archive footage when you park.</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ssidInput">Home WiFi SSID (Network Name)</label>
+            <input type="text" id="ssidInput" placeholder="e.g. Home-Network-2.4G">
+            <p class="label-desc">Case-sensitive. Pi Zero only supports 2.4 GHz.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="wifiPassInput">WiFi Password</label>
+            <div class="input-with-action">
+              <input type="password" id="wifiPassInput" placeholder="Your WiFi security key">
+              <button class="input-action-btn pwd-toggle" data-target="wifiPassInput" type="button">👁️</button>
+            </div>
+            <p class="label-desc">Studio automatically handles quotes and special characters safely!</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="hostnameInput">Device Hostname</label>
+            <input type="text" id="hostnameInput" value="teslausb">
+            <p class="label-desc">Accessible locally via <code>http://teslausb.local</code></p>
+          </div>
+
+          <div class="form-group" style="display: flex; align-items: flex-end; padding-bottom: 0.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input type="checkbox" id="hiddenSsidCheck">
+              <span>This is a hidden SSID network</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="toggle-wrapper" style="margin-top: 1rem;">
+          <div class="toggle-info">
+            <h5>Secondary / Backup WiFi Network (Optional)</h5>
+            <p>Connect to work WiFi or smartphone hotspot when home WiFi is unreachable</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="secondWifiToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div id="secondWifiFields" style="display:none; margin-top: 1rem;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ssid2Input">Secondary WiFi SSID</label>
+              <input type="text" id="ssid2Input" placeholder="e.g. iPhone-Hotspot">
+            </div>
+            <div class="form-group">
+              <label for="wifiPass2Input">Secondary WiFi Password</label>
+              <div class="input-with-action">
+                <input type="password" id="wifiPass2Input" placeholder="Secondary network password">
+                <button class="input-action-btn pwd-toggle" data-target="wifiPass2Input" type="button">👁️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: Archive Sync -->
+    <section class="step-content" id="step3">
+      <div class="card">
+        <h2 class="card-title">Select Archiving Destination</h2>
+        <p class="card-subtitle">Where should your Tesla dashcam and Sentry clips be automatically backed up?</p>
+
+        <div class="grid-cards">
+          <div class="choice-card selected" data-archive="cifs">
+            <div class="choice-icon">📁</div>
+            <h4>Windows Share / SMB / NAS</h4>
+            <p>Synology, QNAP, TrueNAS, Unraid, or Windows Shared Folder (CIFS).</p>
+          </div>
+          <div class="choice-card" data-archive="rclone">
+            <div class="choice-icon">☁️</div>
+            <h4>Cloud Storage (Rclone)</h4>
+            <p>Google Drive, Microsoft OneDrive, Dropbox, Nextcloud, AWS S3.</p>
+          </div>
+          <div class="choice-card" data-archive="rsync">
+            <div class="choice-icon">💻</div>
+            <h4>Linux / SSH Server (RSync)</h4>
+            <p>Fast incremental sync over SSH to any Linux/Unix machine.</p>
+          </div>
+          <div class="choice-card" data-archive="nfs">
+            <div class="choice-icon">🌐</div>
+            <h4>Network File System (NFS)</h4>
+            <p>Native Unix/Linux network share mount.</p>
+          </div>
+          <div class="choice-card" data-archive="none">
+            <div class="choice-icon">📱</div>
+            <h4>Standalone / Web UI Only</h4>
+            <p>No backup server. View and download clips directly from the Pi over WiFi.</p>
+          </div>
+        </div>
+
+        <!-- CIFS Options -->
+        <div id="cifsFields">
+          <h3 style="font-size: 1rem; margin-bottom: 0.75rem; color: var(--accent-blue);">Samba / CIFS Share Details</h3>
+          
+          <!-- Folder Auto-Detector & Smart Path Parser -->
+          <div class="folder-picker-box">
+            <div class="picker-header">
+              <div style="font-weight:600; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
+                <span>📂</span> Auto-Detect Folder & Address
+              </div>
+              <button type="button" class="btn btn-secondary" id="browseArchiveFolderBtn" style="padding:0.4rem 0.85rem; font-size:0.82rem;">
+                📁 Select Folder on Computer / NAS...
+              </button>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin:0.4rem 0 0.5rem 0;">
+              Click <strong>Select Folder</strong> to pick your network drive, or paste your Windows UNC / network path (e.g. <code>\\192.168.1.50\TeslaCam</code> or <code>smb://mynas.local/TeslaCam</code>). Studio will automatically parse the exact server and share address!
+            </p>
+            <div class="path-input-group">
+              <input type="text" id="smartPathInput" placeholder="Paste path here: \\192.168.1.50\TeslaCam or Z:\TeslaCam or smb://..." style="margin-bottom:0;">
+              <button type="button" class="btn btn-primary" id="parsePathBtn" style="white-space:nowrap; padding:0.5rem 1rem; font-size:0.85rem;">
+                ⚡ Auto-Parse
+              </button>
+            </div>
+            
+            <!-- Detected Shares Dropdown -->
+            <div id="detectedSharesContainer" style="display:none; margin-top:0.75rem; padding-top:0.75rem; border-top:1px dashed var(--border-color);">
+              <label for="detectedSharesSelect" style="font-size:0.8rem; font-weight:600; color:var(--accent-blue);">
+                🔗 Detected Network Drives on your PC (1-Click Auto-Fill):
+              </label>
+              <div style="display:flex; gap:0.5rem; margin-top:0.25rem;">
+                <select id="detectedSharesSelect" style="flex:1; margin-bottom:0; font-size:0.85rem; padding:0.5rem 0.75rem;">
+                  <option value="">-- Select detected share --</option>
+                </select>
+                <button type="button" class="btn btn-primary" id="applyDetectedShareBtn" style="padding:0.5rem 1rem; font-size:0.85rem; white-space:nowrap;">
+                  Auto-Fill
+                </button>
+              </div>
+            </div>
+
+            <div class="path-feedback" id="smartPathFeedback"></div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cifsServer">Archive Server IP or Hostname</label>
+              <input type="text" id="cifsServer" placeholder="e.g. 192.168.1.50 or mynas.local">
+              <p class="label-desc">Do not include '\\' or 'smb://'</p>
+            </div>
+            <div class="form-group">
+              <label for="cifsShare">Share Folder Name</label>
+              <input type="text" id="cifsShare" placeholder="e.g. TeslaCam or video/teslacam">
+              <p class="label-desc">Path on the server without leading slash.</p>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cifsUser">Share Username</label>
+              <input type="text" id="cifsUser" placeholder="e.g. tesla">
+            </div>
+            <div class="form-group">
+              <label for="cifsPass">Share Password</label>
+              <div class="input-with-action">
+                <input type="password" id="cifsPass" placeholder="Share user password">
+                <button class="input-action-btn pwd-toggle" data-target="cifsPass" type="button">👁️</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cifsDomain">Domain (Optional)</label>
+              <input type="text" id="cifsDomain" placeholder="WORKGROUP">
+            </div>
+            <div class="form-group">
+              <label for="cifsVersion">SMB Protocol Version (Optional)</label>
+              <input type="text" id="cifsVersion" placeholder="3.0 (defaults to auto)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Rclone Options -->
+        <div id="rcloneFields" style="display:none;">
+          <h3 style="font-size: 1rem; margin-bottom: 0.75rem; color: var(--accent-blue);">Rclone Cloud Storage Details</h3>
+          <div class="callout callout-warning">
+            Note: Headless rclone requires copying an existing <code>rclone.conf</code> into the SD card boot folder, or configuring it via SSH.
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rcloneDrive">Rclone Remote Name</label>
+              <input type="text" id="rcloneDrive" placeholder="e.g. gdrive or onedrive">
+            </div>
+            <div class="form-group">
+              <label for="rclonePath">Remote Destination Path</label>
+              <input type="text" id="rclonePath" placeholder="e.g. TeslaClips">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="rcloneServer">Local Server IP (Optional check for home connection)</label>
+            <input type="text" id="rcloneServer" placeholder="e.g. 192.168.1.1 (your router)">
+          </div>
+        </div>
+
+        <!-- Rsync Options -->
+        <div id="rsyncFields" style="display:none;">
+          <h3 style="font-size: 1rem; margin-bottom: 0.75rem; color: var(--accent-blue);">RSync SSH Details</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rsyncServer">RSync Host or IP</label>
+              <input type="text" id="rsyncServer" placeholder="e.g. 192.168.1.10">
+            </div>
+            <div class="form-group">
+              <label for="rsyncUser">SSH Username</label>
+              <input type="text" id="rsyncUser" placeholder="e.g. pi">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="rsyncPath">Server Path</label>
+            <input type="text" id="rsyncPath" placeholder="e.g. /mnt/storage/TeslaCam">
+          </div>
+        </div>
+
+        <!-- NFS Options -->
+        <div id="nfsFields" style="display:none;">
+          <h3 style="font-size: 1rem; margin-bottom: 0.75rem; color: var(--accent-blue);">NFS Share Details</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nfsServer">NFS Server IP</label>
+              <input type="text" id="nfsServer" placeholder="e.g. 192.168.1.100">
+            </div>
+            <div class="form-group">
+              <label for="nfsShare">NFS Export Path</label>
+              <input type="text" id="nfsShare" placeholder="e.g. /volume1/TeslaCam">
+            </div>
+          </div>
+        </div>
+
+        <!-- None Options -->
+        <div id="noneFields" style="display:none;">
+          <div class="callout callout-info">
+            TeslaUSB will operate standalone. Recordings will remain stored on the Pi's virtual drive and can be streamed, downloaded, or managed via the web browser.
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <label style="font-weight: 600; margin-bottom: 0.5rem;">What recordings should be archived?</label>
+          <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 0.5rem;">
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="archSentry" checked> SentryClips (Triggered events)
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="archSaved" checked> SavedClips (Honk / Manual saves)
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="archTrack" checked> TrackMode Clips
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="archRecent"> RecentClips (Continuous rolling footage)
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STEP 4: Notifications -->
+    <section class="step-content" id="step4">
+      <div class="card">
+        <h2 class="card-title">Push Notifications</h2>
+        <p class="card-subtitle">Receive instant alerts when archiving completes, when errors occur, or when your car arrives home.</p>
+
+        <!-- Discord -->
+        <div class="toggle-wrapper">
+          <div class="toggle-info">
+            <h5>Discord Webhook Alerts</h5>
+            <p>Send transfer summaries and sentry event counts directly to a Discord channel</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="notifDiscordToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div id="discordFields" style="display:none; padding: 0.5rem 1rem 1rem 1rem;">
+          <label for="discordWebhook">Discord Webhook URL</label>
+          <input type="text" id="discordWebhook" placeholder="https://discord.com/api/webhooks/...">
+        </div>
+
+        <!-- Telegram -->
+        <div class="toggle-wrapper">
+          <div class="toggle-info">
+            <h5>Telegram Bot Notifications</h5>
+            <p>Send messages via your custom Telegram bot</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="notifTelegramToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div id="telegramFields" style="display:none; padding: 0.5rem 1rem 1rem 1rem;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="telegramToken">Bot Token</label>
+              <input type="text" id="telegramToken" placeholder="123456789:ABC-DEF1234ghIkl-zyx57W2v1u123ew11">
+            </div>
+            <div class="form-group">
+              <label for="telegramChatId">Chat ID</label>
+              <input type="text" id="telegramChatId" placeholder="e.g. 987654321">
+            </div>
+          </div>
+        </div>
+
+        <!-- Pushover -->
+        <div class="toggle-wrapper">
+          <div class="toggle-info">
+            <h5>Pushover Notifications</h5>
+            <p>High priority push alerts to iOS and Android</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="notifPushoverToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div id="pushoverFields" style="display:none; padding: 0.5rem 1rem 1rem 1rem;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pushoverToken">Pushover App Token</label>
+              <input type="text" id="pushoverToken">
+            </div>
+            <div class="form-group">
+              <label for="pushoverUser">Pushover User Key</label>
+              <input type="text" id="pushoverUser">
+            </div>
+          </div>
+        </div>
+
+        <!-- Gotify -->
+        <div class="toggle-wrapper">
+          <div class="toggle-info">
+            <h5>Gotify (Self-hosted)</h5>
+            <p>Send push notifications to your private self-hosted Gotify server</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="notifGotifyToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div id="gotifyFields" style="display:none; padding: 0.5rem 1rem 1rem 1rem;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gotifyUrl">Gotify Server URL</label>
+              <input type="text" id="gotifyUrl" placeholder="https://gotify.yourdomain.com">
+            </div>
+            <div class="form-group">
+              <label for="gotifyToken">App Token</label>
+              <input type="text" id="gotifyToken">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STEP 5: Car & AP -->
+    <section class="step-content" id="step5">
+      <div class="card">
+        <h2 class="card-title">Tesla Vehicle Keep-Awake</h2>
+        <p class="card-subtitle">Prevent your car from putting USB ports to sleep before archiving finishes.</p>
+
+        <div class="toggle-wrapper">
+          <div class="toggle-info">
+            <h5>Keep Car Awake During Archive</h5>
+            <p>Uses Bluetooth Low Energy (BLE) or Tesla Fleet API to keep the car's power awake while syncing</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="carStayAwakeToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div id="stayAwakeFields" style="display:none; padding: 0.5rem 1rem 1rem 1rem;">
+          <div class="form-group">
+            <label for="teslaVin">Vehicle Identification Number (VIN)</label>
+            <input type="text" id="teslaVin" placeholder="e.g. 5YJ3E1EB...">
+            <p class="label-desc">Required for pairing the Pi as a virtual Bluetooth key with your car.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">In-Car WiFi Hotspot (Access Point)</h2>
+        <p class="card-subtitle">Connect your smartphone or tablet to the Pi inside the car to view footage immediately.</p>
+
+        <div class="toggle-wrapper">
+          <div class="toggle-info">
+            <h5>Enable In-Car WiFi Hotspot</h5>
+            <p>Allows the Pi to broadcast a private WiFi network inside the vehicle</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="enableApToggle">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div id="apFields" style="display:none; padding: 0.5rem 1rem 1rem 1rem;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="apSsid">Hotspot SSID</label>
+              <input type="text" id="apSsid" value="TeslaUSB-Car">
+            </div>
+            <div class="form-group">
+              <label for="apPass">Hotspot Password (min. 8 characters)</label>
+              <input type="text" id="apPass" value="teslausb123">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 6: Deploy & Write -->
+    <section class="step-content" id="step6">
+      <div class="card">
+        <h2 class="card-title">Review & Write Configuration</h2>
+        <p class="card-subtitle">Your validated setup configuration is ready. Choose how you want to deploy it to your SD card.</p>
+
+        <!-- In-Browser 1-Click Flash & Configure Hero -->
+        <div style="background: linear-gradient(135deg, rgba(232, 33, 39, 0.2) 0%, rgba(59, 130, 246, 0.15) 100%); border: 2px solid var(--tesla-red); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(232, 33, 39, 0.2);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+            <h3 style="font-size: 1.3rem; font-weight:700; display: flex; align-items: center; gap: 0.5rem; color: #fff;">
+              ⚡ 1-Click In-Browser Flash & Configure
+            </h3>
+            <span class="badge" style="background:var(--tesla-red); color:white; border:none; padding:0.3rem 0.6rem; font-size:0.75rem;">
+              All-In-One Web Flasher
+            </span>
+          </div>
+          <p style="font-size: 0.9rem; color: #d1d5db; margin-bottom: 1.25rem;">
+            Setup Studio will download the official TeslaUSB image, flash it directly to your card, and write your configured settings automatically — all inside this web interface with zero command lines!
+          </p>
+
+          <div id="flasherControls">
+            <div class="form-group">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <label for="flasherDiskSelect" style="font-weight:600; margin-bottom:0;">Select Target USB Drive / SD Card</label>
+                <span style="font-size:0.75rem; color:var(--accent-green); font-weight:600;">🔒 Internal drives strictly protected</span>
+              </div>
+              <div style="display:flex; gap:0.5rem;">
+                <select id="flasherDiskSelect" style="flex:1; font-weight:600; padding:0.75rem;">
+                  <option value="">🔍 Scanning connected drives...</option>
+                </select>
+                <button type="button" class="btn btn-secondary" id="flasherRefreshBtn" style="padding:0.75rem 1rem;">
+                  🔄 Refresh
+                </button>
+              </div>
+            </div>
+
+            <div class="callout callout-warning" id="flasherEraseWarning" style="margin: 1rem 0; display:none;">
+              ⚠️ <strong>Warning:</strong> All data on the selected drive will be permanently erased.
+            </div>
+
+            <button type="button" class="btn btn-primary" id="flasherStartBtn" style="width:100%; font-size:1.1rem; font-weight:700; padding:1rem; border-radius:8px; box-shadow: 0 4px 15px rgba(232,33,39,0.5);">
+              ⚡ Flash Image & Configure Drive Now
+            </button>
+          </div>
+
+          <!-- Live Progress Container -->
+          <div id="flasherProgressContainer" style="display:none; margin-top:1.5rem; background:rgba(0,0,0,0.4); padding:1.25rem; border-radius:8px; border:1px solid var(--border-color);">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.9rem;">
+              <span id="flasherStageMsg" style="font-weight:600; color:var(--text-main);">Starting...</span>
+              <span id="flasherPercent" style="color:#60a5fa; font-weight:700;">0%</span>
+            </div>
+            <div style="height:12px; background:rgba(255,255,255,0.1); border-radius:6px; overflow:hidden;">
+              <div id="flasherProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #e82127, #f87171); transition:width 0.25s ease;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:0.5rem; font-size:0.8rem; color:var(--text-muted);">
+              <span id="flasherSpeed"></span>
+              <span id="flasherSubStatus"></span>
+            </div>
+          </div>
+
+          <!-- Complete Success Message -->
+          <div id="flasherSuccessContainer" class="callout callout-success" style="display:none; margin-top:1.5rem;">
+            <div>
+              <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:0.4rem;">🎉 Flashing & Configuration Complete!</h4>
+              <p style="font-size:0.88rem; line-height:1.5;">
+                Your MicroSD card has been flashed with TeslaUSB and your WiFi and archive configurations have been written.
+                You can now safely eject the card, insert it into your Raspberry Pi, and connect it to your car!
+              </p>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div id="flasherErrorContainer" class="callout callout-warning" style="display:none; margin-top:1.5rem; background:rgba(239,68,68,0.15); border-left:4px solid #ef4444; color:#fca5a5;">
+            <div>
+              <h4 style="font-size:1rem; font-weight:700; margin-bottom:0.4rem;">⚠️ Flashing Error</h4>
+              <p id="flasherErrorMsg" style="font-size:0.85rem;"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secondary Manual Options (Divider) -->
+        <details style="margin-bottom:1.5rem;">
+          <summary style="cursor:pointer; color:var(--text-muted); font-size:0.85rem; padding:0.5rem 0;">
+            🛠️ Advanced: Manual Download or Direct Boot Folder Writer
+          </summary>
+          <div style="padding-top:1rem;">
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+              <button class="btn btn-secondary" id="writeSdBtn">
+                💾 Write Config to Already-Flashed Boot Drive
+              </button>
+              <button class="btn btn-secondary" id="downloadConfigBtn">
+                📥 Download teslausb_setup_variables.conf
+              </button>
+              <button class="btn btn-outline" id="copyConfigBtn">
+                📋 Copy Raw Bash Config
+              </button>
+            </div>
+            <div id="writeStatus" style="margin-bottom:1rem;"></div>
+          </div>
+        </details>
+
+        <!-- Generated Code Preview -->
+        <div class="code-preview">
+          <div class="code-header">
+            <span>teslausb_setup_variables.conf (Live Preview)</span>
+            <span style="font-size: 0.75rem; color: var(--accent-green);">Syntax Validated</span>
+          </div>
+          <pre id="configCodePreview"></pre>
+        </div>
+
+        <!-- Next Steps Callout -->
+        <div class="callout callout-success">
+          <div>
+            <h4 style="font-weight: 700; margin-bottom: 0.25rem;">Next Steps:</h4>
+            <ol style="margin-left: 1.25rem; font-size: 0.85rem; line-height: 1.6;">
+              <li>Flash the latest TeslaUSB release image using Raspberry Pi Imager.</li>
+              <li>Write or copy <code>teslausb_setup_variables.conf</code> to the <code>boot</code> partition of your SD card.</li>
+              <li>Insert the card into your Raspberry Pi and connect it to your car or a USB power supply.</li>
+              <li>Wait about 5-10 minutes for automated setup to partition drives and configure WiFi.</li>
+              <li>Access the live dashboard anytime at <code>http://teslausb.local</code>!</li>
+            </ol>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Bottom Navigation Footer -->
+    <div class="wizard-footer">
+      <button class="btn btn-secondary" id="prevBtn" style="visibility: hidden;">
+        ← Back
+      </button>
+      <button class="btn btn-primary" id="nextBtn">
+        <span>Next Step</span> →
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Config Linter & Validator Modal -->
+  <div class="modal-overlay" id="linterModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🔍 TeslaUSB Config Linter & Validator</h3>
+        <button class="close-btn" id="closeLinterBtn">&times;</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Paste your existing <code>teslausb_setup_variables.conf</code> file below to inspect it for bash syntax errors, unescaped characters, or configuration issues.
+      </p>
+      <textarea id="linterInput" rows="8" placeholder="Paste your export SSID='...' lines here..."></textarea>
+      
+      <div style="display:flex; justify-content: flex-end; margin-top: 1rem;">
+        <button class="btn btn-primary" id="runLinterBtn">Analyze Configuration</button>
+      </div>
+
+      <div class="validation-results" id="linterResults"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
