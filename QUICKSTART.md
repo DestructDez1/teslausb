@@ -81,3 +81,10 @@ Once setup is complete and your Pi is connected to your network:
 | **Share fails to mount** | Incorrect share path formatting | Share names should NOT start with `\\` or `/`. For example, use `TeslaCam` or `share/folder`, not `\\server\TeslaCam`. |
 | **Can't access `teslausb.local`** | mDNS / Bonjour not resolving | Use the Pi's local IP address (found via your router's DHCP client list), or use the In-Car AP. |
 
+---
+
+### 💖 Credits & Acknowledgements
+- **Marcone (@marcone)** — Upstream creator and maintainer of [marcone/teslausb](https://github.com/marcone/teslausb) and [teslausb-webui](https://github.com/marcone/teslausb-webui).
+- **Cimryan (@cimryan)** — Original creator of [cimryan/teslausb](https://github.com/cimryan/teslausb).
+- **The Tesla & Reddit Open-Source Community** — For testing, guides, and ongoing support.
+

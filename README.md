@@ -1,4 +1,8 @@
-# teslausb
+# teslausb — Modernized Setup Studio & All-in-One Flasher
+
+> **Fork & Attribution Notice**: This project is a community modernization and fork of the groundbreaking [marcone/teslausb](https://github.com/marcone/teslausb) project, originally created by [cimryan](https://github.com/cimryan/teslausb) from the original Reddit concept. All core OTG emulation, snapshotting, CIFS/rclone archiving, and gadget infrastructure are the work of **Marcone** and the upstream TeslaUSB contributors. 
+> 
+> This fork modernizes the onboarding experience by adding **Setup Studio** (an all-in-one web flasher and visual configurator), **strict drive safety protection**, **automatic network share detection**, a **synchronized 4-camera video player**, and a 1-click startup workflow to eliminate command-line barriers.
 
 ## Intro
 
@@ -53,8 +57,15 @@ To install teslausb on a Raspberry Pi, it is recommended to use the [prebuilt im
 You're welcome to contribute to this repo by submitting pull requests and creating issues.
 For pull requests, please split complex changes into multiple pull requests when feasible, and follow the existing code style.
 
-## Meta
+## Credits & Acknowledgements
 
-This repo contains steps and scripts originally from [this thread on Reddit](https://www.reddit.com/r/teslamotors/comments/9m9gyk/build_a_smart_usb_drive_for_your_tesla_dash_cam/)
+This modernized version builds directly upon the years of dedication and innovation by the original TeslaUSB creators and maintainers:
 
-Many people in that thread suggested that the scripts be hosted on GitHub but the author didn't seem interested in making that happen, so GitHub user "cimryan" hosted the scripts on GitHub with the Reddit user's permission.
+- **[Marcone (@marcone)](https://github.com/marcone)**: Lead architect and maintainer of [marcone/teslausb](https://github.com/marcone/teslausb) and [marcone/teslausb-webui](https://github.com/marcone/teslausb-webui). Marcone engineered the headless setup automation, the robust read-only root filesystem architecture, multi-protocol archiving (CIFS, rsync, rclone), and the web interface.
+- **[Cimryan (@cimryan)](https://github.com/cimryan)**: The original creator who founded the [cimryan/teslausb](https://github.com/cimryan/teslausb) repository and organized the initial community scripts onto GitHub.
+- **The Reddit Community**: The original creators and testers in the [r/teslamotors community thread](https://www.reddit.com/r/teslamotors/comments/9m9gyk/build_a_smart_usb_drive_for_your_tesla_dash_cam/) whose early proof-of-concept inspired the smart dashcam ecosystem.
+- **Upstream Contributors**: All [contributors to marcone/teslausb](https://github.com/marcone/teslausb/graphs/contributors) whose code, testing, and bug reports make TeslaUSB possible.
+
+## License
+
+This project is licensed under the original GNU General Public License (GPL) / MIT License — see the [LICENSE](LICENSE) file for details.
