@@ -10,3 +10,4 @@ cache/
 *.pyc
 __pycache__/
 *.code-workspace
+push-to-github.bat
