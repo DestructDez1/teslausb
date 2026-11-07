@@ -52,6 +52,16 @@ Optional:
 
 To install teslausb on a Raspberry Pi, it is recommended to use the [prebuilt image](https://github.com/marcone/teslausb/releases) and [one step setup instructions](doc/OneStepSetup.md). For other SBCs, start [here](https://github.com/marcone/teslausb/wiki/Installation)
 
+## 🗺️ Project Roadmap & Community Goals
+
+We are actively developing and expanding this modernized fork. Upcoming features on the horizon include:
+
+- [ ] **📊 Telemetry & Session Logging**: Optional integration with self-hosted [TeslaMate](https://github.com/teslamate-org/teslamate) and the official Tesla Fleet API to log drive statistics, battery efficiency, and charging curves alongside Dashcam events.
+- [ ] **🎞️ Automatic Clip Stitcher & Video Export**: Built-in background ffmpeg job to automatically merge segmented 1-minute clips into continuous full-event videos with audio track preservation.
+- [ ] **🏠 Smart Home & Push Notifications**: Native MQTT integration for Home Assistant, Discord webhooks, and Telegram alerts whenever a Sentry Mode event is archived.
+- [ ] **🍓 Raspberry Pi 5 USB-OTG Profile Testing**: Expanded support and verified boot configurations for Raspberry Pi 5 hardware.
+- [ ] **🌐 In-Car Hotspot Web Viewer Polish**: Enhanced mobile UI with quick clip bookmarking and direct video download from mobile devices over the car's local hotspot.
+
 ## Contributing
 
 You're welcome to contribute to this repo by submitting pull requests and creating issues.
