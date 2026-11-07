@@ -62,8 +62,8 @@ if "%HAS_CHANGES%"=="1" (
 )
 
 :: 3. Push to GitHub
-echo [*] Pushing branch main-dev to GitHub...
-git push -u origin main-dev
+echo [*] Pushing branch main to GitHub...
+git push -u origin main
 
 if %errorlevel% equ 0 (
     echo.
@@ -78,3 +78,4 @@ if %errorlevel% equ 0 (
 
 echo.
 pause
+
